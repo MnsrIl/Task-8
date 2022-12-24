@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <title th:text="${user.getName()} + '\'s Information'" />
+</head>
+<body>
+<img style="width: 20%;" th:src="${user.getAvatarURL()}" alt="preview"/>
+<div>
+    <div th:text="'User - ' + ${user.getName()} + '#' + ${user.getId()}"/>
+    <p th:text="'I\'m ' + ${user.getAge()} + ' years old. I\'m professional ' + ${user.getProfession()} + '.'"/>
+    <div th:if="${user.isHasBrains()}">And I am smart.</div>
+    <div th:if="${!user.isHasBrains()}">And I'm not so smart.</div>
+    <div>
+        <a href="/users">Go Back</a>
+        <a th:href="@{/users/edit(id=${user.getId()})}">Edit</a>
+    </div>
+</div>
+</body>
+</html>
