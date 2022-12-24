@@ -1,21 +1,33 @@
 package web.model;
 
-public class User {
-    private static Long count = 1L;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name", length = 50)
     private String name;
+
+    @Column(name = "profession")
     private String profession;
+
+    @Column(name = "avatar_url")
     private String avatarURL;
-    private boolean hasBrains = false;
+
+    @Column(name = "has_brains")
+    private boolean hasBrains;
+
+    @Column(name = "age")
     private int age;
 
     public User() {
-        this.id = count++;
     }
 
     public User(String name, String profession, String avatarURL, boolean hasBrains, int age) {
-        this.id = count++;
         this.name = name;
         this.profession = profession;
         this.hasBrains = hasBrains;
@@ -25,6 +37,10 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

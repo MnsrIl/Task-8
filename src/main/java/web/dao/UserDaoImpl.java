@@ -1,55 +1,64 @@
 package web.dao;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
 
-import java.util.ArrayList;
+import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class UserDaoImpl implements UserDao {
-    private final static List<User> users = new ArrayList<>();
 
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    @Transactional
     @Override
-    public void saveUser(String name, String profession, String avatarURL, boolean hasBrains, int age) {
-        users.add(new User(name, profession, avatarURL, hasBrains, age));
+    public void saveUser(User user) {
+        sessionFactory.getCurrentSession().save(user);
     }
 
+    @Transactional
     @Override
-    public void updateUser(Long id, String name, String profession, String avatarURL, boolean hasBrains, int age) {
-        users.forEach(user -> {
-            if (Objects.equals(user.getId(), id)) {
-                user.setAge(age);
-                user.setAvatarURL(avatarURL);
-                user.setHasBrains(hasBrains);
-                user.setName(name);
-                user.setProfession(profession);
-            }
-        });
+    public void updateUser(User user) {
+        sessionFactory.getCurrentSession().update(user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
-        users.removeIf(user -> Objects.equals(user.getId(), id));
+        Session session = sessionFactory.getCurrentSession();
+        User user = session.get(User.class, id);
+
+        if (user != null) session.delete(user);
     }
 
+    @Transactional
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteUsers() {
-        users.clear();
+        Session session = sessionFactory.getCurrentSession();
+
+        TypedQuery<User> listQuery = session.createQuery("from User");
+
+        listQuery.getResultList().forEach(session::delete);
     }
 
+    @Transactional(readOnly = true)
     @Override
+    @SuppressWarnings("unchecked")
     public List<User> getUsers() {
-        return new ArrayList<>(users);
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
+        return query.getResultList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
-        for (User user: users) {
-            if (Objects.equals(user.getId(), id)) return user;
-        }
-
-        return null;
+        return sessionFactory.getCurrentSession().get(User.class, id);
     }
 }

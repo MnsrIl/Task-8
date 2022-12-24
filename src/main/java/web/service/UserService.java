@@ -5,9 +5,10 @@ import web.model.User;
 import java.util.List;
 
 public interface UserService {
-    void createUser(String name, String profession, String avatarURL, boolean hasBrains, int age);
 
-    void updateUser(Long id, String name, String profession, String avatarURL, boolean hasBrains, int age);
+    void createUser(User user);
+
+    void updateUser(User user);
 
     void deleteUser(Long id);
 

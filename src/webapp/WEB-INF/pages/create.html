@@ -3,13 +3,13 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
-    <title>Create User</title>
+    <title th:text="${isCreate ? 'Create User' : 'Edit ' + user.getName()}" />
 </head>
 <body>
 
 <form
         th:method="POST"
-        th:action="@{${isCreate ? '/users/create' : '/users/edit?id=' + id}}"
+        th:action="@{${isCreate ? '/users/create' : '/users/edit?id=' + user.getId()}}"
         th:object="${user}"
         style="display: flex; flex-direction: column; width: fit-content">
     <input placeholder="avatar URL" th:field="*{avatarURL}">

@@ -5,9 +5,10 @@ import web.model.User;
 import java.util.List;
 
 public interface UserDao {
-    void saveUser(String name, String profession, String avatarURL, boolean hasBrains, int age);
 
-    void updateUser(Long id, String name, String profession, String avatarURL, boolean hasBrains, int age);
+    void saveUser(User user);
+
+    void updateUser(User user);
 
     void deleteUser(Long id);
 

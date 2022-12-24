@@ -17,7 +17,6 @@ public class UserController {
         this.userService = service;
     }
 
-
     @GetMapping
     public String printUsers(ModelMap modelMap) {
         List<User> users = userService.getUsers();
@@ -30,10 +29,6 @@ public class UserController {
     @GetMapping("/{id}")
     public String printUserProfile(@PathVariable("id") long id, ModelMap modelMap) {
         modelMap.addAttribute("user", userService.getUserById(id));
-
-        System.out.println(userService.getUserById(id));
-        System.out.println(userService.getUsers());
-        System.out.println(id);
 
         return "profile";
     }
@@ -48,38 +43,36 @@ public class UserController {
 
     @PostMapping("/create")
     public String createUser(@ModelAttribute("user") User user, ModelMap modelMap) {
-        System.out.println("Creating...");
+        userService.createUser(user);
+
         modelMap.addAttribute("isCreate", true);
-        userService.createUser(user.getName(), user.getProfession(), user.getAvatarURL(), user.isHasBrains(), user.getAge());
+        modelMap.addAttribute("user", new User());
+
         return "create";
     }
 
     @GetMapping("/edit")
     public String printEditForm(@RequestParam(value = "id", required = false) Long id, ModelMap modelMap) {
         String redirectNotExistsTo = "/users";
-        User realUser = userService.getUserById(id);
+        User user = userService.getUserById(id);
 
-        if (realUser == null) return "redirect:" + redirectNotExistsTo;
+        if (user == null) return "redirect:" + redirectNotExistsTo;
 
         modelMap.addAttribute("isCreate", false);
-        modelMap.addAttribute("id", id);
-        modelMap.addAttribute("user", new User(realUser.getName(), realUser.getProfession(), realUser.getAvatarURL(), realUser.isHasBrains(), realUser.getAge()));
+        modelMap.addAttribute("user", user);
 
         return "create";
     }
 
     @PostMapping("/edit")
     public String editUser(@RequestParam("id") Long id, @ModelAttribute("user") User user) {
-        System.out.println("Editing...");
-        userService.updateUser(id, user.getName(), user.getProfession(), user.getAvatarURL(), user.isHasBrains(), user.getAge());
+        userService.updateUser(user);
 
         return "redirect:/users/" + id;
     }
 
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam(value = "id") Long id) {
-        System.out.println("Deleting...");
-
         userService.deleteUser(id);
     }
 
