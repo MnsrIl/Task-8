@@ -1,64 +1,60 @@
 package web.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
+@Transactional
 public class UserDaoImpl implements UserDao {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Transactional
     @Override
     public void saveUser(User user) {
-        sessionFactory.getCurrentSession().save(user);
+        entityManager.persist(user);
+        entityManager.flush();
     }
 
-    @Transactional
     @Override
     public void updateUser(User user) {
-        sessionFactory.getCurrentSession().update(user);
+        entityManager.merge(user);
+        entityManager.flush();
     }
 
-    @Transactional
     @Override
     public void deleteUser(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        User user = session.get(User.class, id);
+        User user = entityManager.find(User.class, id);
 
-        if (user != null) session.delete(user);
+        if (user != null) {
+            entityManager.remove(user);
+            entityManager.flush();
+        }
     }
 
-    @Transactional
     @Override
-    @SuppressWarnings("unchecked")
     public void deleteUsers() {
-        Session session = sessionFactory.getCurrentSession();
+        TypedQuery<User> listQuery = entityManager.createQuery("select u from User u", User.class);
 
-        TypedQuery<User> listQuery = session.createQuery("from User");
-
-        listQuery.getResultList().forEach(session::delete);
+        listQuery.getResultList().forEach(entityManager::remove);
     }
 
     @Transactional(readOnly = true)
     @Override
-    @SuppressWarnings("unchecked")
     public List<User> getUsers() {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
-        return query.getResultList();
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
     }
 
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
-        return sessionFactory.getCurrentSession().get(User.class, id);
+        return entityManager.find(User.class, id);
     }
 }

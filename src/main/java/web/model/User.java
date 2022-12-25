@@ -1,6 +1,10 @@
 package web.model;
 
+import org.hibernate.validator.constraints.URL;
+
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -9,19 +13,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", length = 50)
+    @Column(name = "name")
+    @Size(min = 3, max = 50, message = "Name length should be between 3 and 50 characters")
     private String name;
 
     @Column(name = "profession")
     private String profession;
 
     @Column(name = "avatar_url")
+    @URL(message = "Provide valid avatar URL")
     private String avatarURL;
 
     @Column(name = "has_brains")
-    private boolean hasBrains;
+    private boolean hasBrains = false;
 
     @Column(name = "age")
+    @Min(value = 1, message = "Minimal age is 1")
     private int age;
 
     public User() {

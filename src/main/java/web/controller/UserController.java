@@ -2,10 +2,12 @@ package web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -42,8 +44,9 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute("user") User user, ModelMap modelMap) {
-        userService.createUser(user);
+    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, ModelMap modelMap) {
+        if (!bindingResult.hasErrors())
+            userService.createUser(user);
 
         modelMap.addAttribute("isCreate", true);
         modelMap.addAttribute("user", new User());
@@ -54,7 +57,7 @@ public class UserController {
     @GetMapping("/edit")
     public String printEditForm(@RequestParam(value = "id", required = false) Long id, ModelMap modelMap) {
         String redirectNotExistsTo = "/users";
-        User user = userService.getUserById(id);
+        User user = id == null ? null : userService.getUserById(id);
 
         if (user == null) return "redirect:" + redirectNotExistsTo;
 
@@ -65,15 +68,18 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public String editUser(@RequestParam("id") Long id, @ModelAttribute("user") User user) {
-        userService.updateUser(user);
+    public String editUser(@RequestParam("id") Long id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (!bindingResult.hasErrors())
+            userService.updateUser(user);
 
         return "redirect:/users/" + id;
     }
 
-    @DeleteMapping("/delete")
-    public void deleteUser(@RequestParam(value = "id") Long id) {
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam(value = "id") Long id) {
         userService.deleteUser(id);
+
+        return "redirect:/users";
     }
 
     @DeleteMapping("/deleteAll")
