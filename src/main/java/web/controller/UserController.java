@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @Controller

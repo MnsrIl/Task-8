@@ -1,10 +1,14 @@
 package web.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.persistence.Id;
 import org.hibernate.validator.constraints.URL;
-
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
